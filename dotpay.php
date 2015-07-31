@@ -143,7 +143,6 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	private function prepareVarsArray($order)
 	{
 		$returnUrl =  HIKASHOP_LIVE.'index.php?option=com_hikashop&ctrl=checkout&task=after_end&order_id='.$order->order_id . $this->url_itemid;
-
 		$address = $this->getAddress($order);
 		$vars = array(
 			'id' => $this->payment_params->identifier,
@@ -229,11 +228,23 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	private function isNotificationValidated($vars, $orderDb)
 	{
+		if($_SERVER['REQUEST_METHOD'] != 'POST')
+			return false;
+		if(!$this->isTrustedIp())
+			return false;
 		if(!$this->isSignatureMatch($vars))
 			return false;
 		if(!$this->isPriceMatch($vars, $orderDb))
 			return false;
 		return true;
+	}
+
+	private function isTrustedIp()
+	{
+		if($_SERVER['REMOTE_ADDR'] == '195.150.9.37' || $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -261,7 +272,6 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	private function isSignatureMatch($vars)
 	{
 		if(isset($vars['signature']) && $this->calculateSignature($vars) == $vars['signature']){
-
 			return true;
 		}
 	}
