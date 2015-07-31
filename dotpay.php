@@ -10,8 +10,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 
 	var $pluginConfig = array(
 		'identifier' => array("Id",'input'),
-		'pid' => array("Pid",'input'),
-		'notification' => array('ALLOW_NOTIFICATIONS_FROM_X', 'boolean','0'),
+		'pin' => array("Pin",'input'),
 		'payment_url' => array("Payment URL", 'input'),
 		'return_url' => array('RETURN_URL', 'input'),
 		'invalid_status' => array('INVALID_STATUS', 'orderstatus'),
@@ -193,7 +192,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	private function isPaymentParametersValidate()
 	{
-		if (!$this->payment_params->identifier || !$this->payment_params->pid){
+		if (!$this->payment_params->identifier || !$this->payment_params->pin){
 			$this->app->enqueueMessage('You have to configure an identifier for the Example plugin payment first : check your plugin\'s parameters, on your website backend','error');
 			return false;
 		}
@@ -267,7 +266,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	private function calculateSignature($vars)
 	{
-		$string = $this->payment_params->pid .
+		$string = $this->payment_params->pin .
 		(isset($vars['id']) ? $vars['id'] : '').
 		(isset($vars['operation_number']) ? $vars['operation_number'] : '').
 		(isset($vars['operation_type']) ? $vars['operation_type'] : '').
