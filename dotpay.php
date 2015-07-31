@@ -11,8 +11,10 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	var $pluginConfig = array(
 		'identifier' => array("Id",'input'),
 		'pin' => array("Pin",'input'),
-		'payment_url' => array("Payment URL", 'input'),
-		'return_url' => array('RETURN_URL', 'input'),
+		'dotpay_mode' => array('Dotpay mode', 'list',array(
+			'test' => 'Test',
+			'prodution' => 'Production'
+		)),
 		'invalid_status' => array('INVALID_STATUS', 'orderstatus'),
 		'pending_status' => array('PENDING_STATUS', 'orderstatus'),
 		'verified_status' => array('VERIFIED_STATUS', 'orderstatus')
@@ -21,10 +23,11 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	const API_VERSION = 'dev';
 	const PAYMENT_TYPE = '0';
 	const ADDRESS_TYPE = 'billing_address';
+	const DOTPAY_URL = 'https://ssl.dotpay.pl/';
+	const DOTPAY_TEST_URL = 'https://ssl.dotpay.pl/test_payment/';
 
 	public function __construct(&$subject, $config)
 	{
-		$this->pluginConfig['notification'][0] =  JText::sprintf('ALLOW_NOTIFICATIONS_FROM_X','Dotpay');
 		$this->pluginConfig['notify_url'][2] = HIKASHOP_LIVE.'index.php?option=com_hikashop&ctrl=checkout&task=notify&notif_payment='.$this->name.'&tmpl=component';
 		return parent::__construct($subject, $config);
 	}
@@ -50,7 +53,16 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		}
 
 		$this->vars = $this->prepareVarsArray($order);
+
 		return $this->showPage('end');
+	}
+
+	public function getDotpayUrl()
+	{
+		if($this->payment_params->dotpay_mode == 'production'){
+			return self::DOTPAY_URL;
+		}
+		return self::DOTPAY_TEST_URL;
 	}
 
 
@@ -88,10 +100,8 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		$element->payment_description='dotpay';
 		$element->payment_images='MasterCard,VISA,Credit_card,American_Express';
 		$element->payment_params->address_type="billing";
-		$element->payment_params->notification=1;
 		$element->payment_params->invalid_status='cancelled';
 		$element->payment_params->verified_status='confirmed';
-		$element->payment_params->payment_url='https://ssl.dotpay.pl/test_payment/';
 	}
 
 	/**
@@ -106,7 +116,6 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	public function onPaymentNotification(&$statuses)
 	{
-
 		$vars = $this->createVarsFromRequest();
 		$orderId = (int)@$vars['control'];
 
@@ -133,7 +142,6 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	private function prepareVarsArray($order)
 	{
-
 		$returnUrl =  HIKASHOP_LIVE.'index.php?option=com_hikashop&ctrl=checkout&task=after_end&order_id='.$order->order_id . $this->url_itemid;
 
 		$address = $this->getAddress($order);
@@ -144,7 +152,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 			'control' => (string)$order->order_id,
 			'description' => $order->order_number,
 			'lang' => $this->getLanguage(),
-			'URL' => $this->payment_params->return_url ? : $returnUrl,
+			'URL' => $returnUrl,
 			'URLC' => $this->pluginConfig['notify_url'][2],
 			'type' => self::PAYMENT_TYPE,
 			'api_version' => self::API_VERSION,

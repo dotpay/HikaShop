@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 	<span id="hikashop_paypal_end_spinner" class="hikashop_paypal_end_spinner hikashop_checkout_end_spinner">
 	</span>
 	<br/>
-	<form id="hikashop_paypal_form" name="hikashop_paypal_form" action="<?php echo $this->payment_params->payment_url;?>" method="post">
+	<form id="hikashop_paypal_form" name="hikashop_paypal_form" action="<?php echo $this->getDotpayUrl();?>" method="post">
 		<div id="hikashop_paypal_end_image" class="hikashop_paypal_end_image">
 			<input id="hikashop_paypal_button" type="submit" class="btn btn-primary" value="<?php echo JText::_('PAY_NOW');?>" name="" alt="<?php echo JText::_('PAY_NOW');?>" />
 		</div>
