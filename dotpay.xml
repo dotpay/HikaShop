@@ -19,6 +19,12 @@
         <folder>payment</folder>
     </media>
 
+    <languages folder="language">
+        <language tag="pl-PL">pl-PL/pl-PL.plg_hikashoppayment_dotpay.ini</language>
+        <language tag="pl-PL">pl-PL/pl-PL.plg_hikashoppayment_dotpay.sys.ini</language>
+    </languages>
+
+
 	<params addpath="/components/com_hikashop/params">
 		<param name="pluginoptions" type="pluginoptions" default="plugin" label="hikashop" description="HikaShop options" />
 	</params>

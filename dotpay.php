@@ -11,9 +11,9 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	var $pluginConfig = array(
 		'identifier' => array("Id",'input'),
 		'pin' => array("Pin",'input'),
-		'dotpay_mode' => array('Dotpay mode', 'list',array(
-			'test' => 'Test',
-			'prodution' => 'Production'
+		'dotpay_mode' => array('DOTPAY_MODE', 'list',array(
+			'test' => 'TEST',
+			'prodution' => 'PRODUCTION'
 		)),
 		'invalid_status' => array('INVALID_STATUS', 'orderstatus'),
 		'pending_status' => array('PENDING_STATUS', 'orderstatus'),
@@ -23,6 +23,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	const API_VERSION = 'dev';
 	const PAYMENT_TYPE = '0';
 	const ADDRESS_TYPE = 'billing_address';
+	const TRUSTED_IP = '195.150.9.37';
 	const DOTPAY_URL = 'https://ssl.dotpay.pl/';
 	const DOTPAY_TEST_URL = 'https://ssl.dotpay.pl/test_payment/';
 
@@ -57,6 +58,11 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		return $this->showPage('end');
 	}
 
+	/**
+	 * This method return correct url to dotpay based on mode from config
+	 *
+	 * @return string
+	 */
 	public function getDotpayUrl()
 	{
 		if($this->payment_params->dotpay_mode == 'production'){
@@ -200,7 +206,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	private function isPaymentParametersValidate()
 	{
 		if (!$this->payment_params->identifier || !$this->payment_params->pin){
-			$this->app->enqueueMessage('You have to configure an identifier for the Example plugin payment first : check your plugin\'s parameters, on your website backend','error');
+			$this->app->enqueueMessage(JText::_("INCOMPLET_CONFIG"),'error');
 			return false;
 		}
 		return true;
@@ -218,7 +224,9 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	}
 
 	/**
-	 * Check if notification is validated, check two parameters:
+	 * Check if notification is validated,
+	 * After validate request : trusted ip and if request is post
+	 * Check folloed parameters:
 	 * Signature from dotpay, checkout dotpay documenation and
 	 * price from order and returned from dotpay
 	 *
@@ -239,9 +247,15 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		return true;
 	}
 
+	/**
+	 *
+	 * Check if incoming request goes from trusted ip
+	 *
+	 * @return bool
+	 */
 	private function isTrustedIp()
 	{
-		if($_SERVER['REMOTE_ADDR'] == '195.150.9.37' || $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ){
+		if($_SERVER['REMOTE_ADDR'] == self::TRUSTED_IP || $_SERVER['REMOTE_ADDR'] == '127.0.0.1' ){
 			return true;
 		}
 		return false;
