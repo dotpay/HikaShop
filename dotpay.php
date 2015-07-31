@@ -4,7 +4,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 {
 	protected $autoloadLanguage = true;
 
-	var $accepted_currencies = array( "EUR", "USD", "GBP", "JPY","CZK", "SEK" );
+	var $accepted_currencies = array( "PLN","EUR", "USD", "GBP", "JPY","CZK", "SEK" );
 	var $multiple = true;
 	var $name = 'dotpay';
 
@@ -98,7 +98,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	{
 		$element->payment_name='Dotpay';
 		$element->payment_description='dotpay';
-		$element->payment_images='MasterCard,VISA,Credit_card,American_Express';
+		$element->payment_images='dotpay';
 		$element->payment_params->address_type="billing";
 		$element->payment_params->invalid_status='cancelled';
 		$element->payment_params->verified_status='confirmed';

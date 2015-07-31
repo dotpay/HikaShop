@@ -15,6 +15,9 @@
         <filename>index.html</filename>
 	</files>
 
+    <media folder="media" destination="com_hikashop/images">
+        <folder>payment</folder>
+    </media>
 
 	<params addpath="/components/com_hikashop/params">
 		<param name="pluginoptions" type="pluginoptions" default="plugin" label="hikashop" description="HikaShop options" />
