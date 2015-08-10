@@ -4,6 +4,8 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 {
 	protected $autoloadLanguage = true;
 
+    private $statusMessage;
+
 	var $accepted_currencies = array( "PLN","EUR", "USD", "GBP", "JPY","CZK", "SEK" );
 	var $multiple = true;
 	var $name = 'dotpay';
@@ -127,17 +129,38 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 
 		$orderDb = $this->loadOrderRelatedData($orderId);
 
-		if(!$this->isNotificationValidated($vars, $orderDb) || $vars['operation_status'] == 'rejected'){
-			$this->modifyOrder($orderId, $this->payment_params->invalid_status, true, true);
-			return false;
+		if(!$this->isRequestValidated($vars, $orderDb)){
+            return $this->processRequest($orderId, $this->payment_params->invalid_status);
 		}
-		if( $vars['operation_status'] == 'completed'){
-			$this->modifyOrder($orderId, $this->payment_params->verified_status, true, true);
-			return 'OK';
+
+        if(!$this->isSignatureMatch($vars)){
+            return $this->processRequest($orderId, $this->payment_params->pending_status);
+        }
+
+        if($this->isStatusCompleted($vars)){
+            return $this->processRequest($orderId, $this->payment_params->verified_status);
 		}else{
-			$this->modifyOrder($orderId, $this->payment_params->pending_status, true, true);
-		}
+            $this->statusMessage = $vars['operation_status'];
+            return $this->processRequest($orderId, $this->payment_params->pending_status);
+        }
 	}
+
+    /**
+     *
+     * Updateing order, collect error log and then return message do dotpay
+     *
+     * @param $orderId
+     * @param $status
+     * @return mixed
+     */
+    private function processRequest($orderId, $status)
+    {
+        $this->modifyOrder($orderId, $status, true, true);
+        if(!($this->statusMessage == 'OK' || $this->statusMessage == 'new')){
+            $this->writeToLog('Dotpay error status message: '. $this->statusMessage);
+        }
+        return $this->statusMessage;
+    }
 
 	/**
 	 * This method prepare array which is send to dotpay based on order, payment configuration
@@ -227,25 +250,50 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 * Check if notification is validated,
 	 * After validate request : trusted ip and if request is post
 	 * Check folloed parameters:
-	 * Signature from dotpay, checkout dotpay documenation and
 	 * price from order and returned from dotpay
+     * operation status
 	 *
 	 * @param $vars
 	 * @param $orderDb
 	 * @return bool
 	 */
-	private function isNotificationValidated($vars, $orderDb)
+	private function isRequestValidated($vars, $orderDb)
 	{
-		if($_SERVER['REQUEST_METHOD'] != 'POST')
-			return false;
-		if(!$this->isTrustedIp())
-			return false;
-		if(!$this->isSignatureMatch($vars))
-			return false;
-		if(!$this->isPriceMatch($vars, $orderDb))
-			return false;
+		if($_SERVER['REQUEST_METHOD'] != 'POST'){
+            $this->statusMessage = 'invalid request method';
+            return false;
+        }
+
+		if(!$this->isTrustedIp()){
+            $this->statusMessage = 'untrusted Ip';
+            return false;
+        }
+
+        if(!$this->isPriceMatch($vars, $orderDb)){
+            $this->statusMessage = 'price does not match';
+            return false;
+        }
+
+        if($vars['operation_status'] == 'rejected'){
+            $this->statusMessage = 'status rejected';
+            return false;
+        }
 		return true;
 	}
+
+    /**
+     * Check whether status is completed
+     *
+     * @param $vars
+     * @return bool
+     */
+    private function isStatusCompleted($vars)
+    {
+        if( $vars['operation_status'] == 'completed'){
+            $this->statusMessage = 'OK';
+            return true;
+        }
+    }
 
 	/**
 	 *
@@ -285,9 +333,11 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 */
 	private function isSignatureMatch($vars)
 	{
-		if(isset($vars['signature']) && $this->calculateSignature($vars) == $vars['signature']){
-			return true;
+		if(!isset($vars['signature']) || $this->calculateSignature($vars) != $vars['signature']){
+            $this->statusMessage = 'signature do not match';
+            return false;
 		}
+        return true;
 	}
 
 	/**
