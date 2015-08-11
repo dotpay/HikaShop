@@ -15,7 +15,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		'pin' => array("Pin",'input'),
 		'dotpay_mode' => array('DOTPAY_MODE', 'list',array(
 			'test' => 'TEST',
-			'prodution' => 'PRODUCTION'
+			'production' => 'PRODUCTION'
 		)),
 		'invalid_status' => array('INVALID_STATUS', 'orderstatus'),
 		'pending_status' => array('PENDING_STATUS', 'orderstatus'),
