@@ -13,10 +13,11 @@
 		<filename plugin="dotpay">dotpay.php</filename>
 		<filename>dotpay_end.php</filename>
         <filename>index.html</filename>
+        <folder>media</folder>
 	</files>
 
-    <media folder="media" destination="com_hikashop/images">
-        <folder>payment</folder>
+    <media folder="media" destination="com_hikashop/images/payment/dotpay">
+        <filename>dotpay.jpeg</filename>
     </media>
 
     <languages folder="language">

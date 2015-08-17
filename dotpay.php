@@ -60,6 +60,10 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		return $this->showPage('end');
 	}
 
+
+
+
+
 	/**
 	 * This method return correct url to dotpay based on mode from config
 	 *
@@ -275,7 +279,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
         }
 
         if($vars['operation_status'] == 'rejected'){
-            $this->statusMessage = 'status rejected';
+            $this->statusMessage = 'OK';
             return false;
         }
 		return true;
