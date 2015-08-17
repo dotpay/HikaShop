@@ -83,8 +83,8 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
      */
     private function moveImage($imagePath)
     {
-        $src = $imagePath . 'payment'.DS.'dotpay/dotpay.jpeg';
-        $destination = $imagePath.'payment/dotpay.jpeg';
+        $src = $imagePath . 'payment'.DS.'dotpay/dotpay.png';
+        $destination = $imagePath.'payment/dotpay.png';
         JFile::copy($src, $destination,null, true );
     }
 

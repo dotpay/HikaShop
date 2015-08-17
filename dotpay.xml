@@ -17,7 +17,7 @@
 	</files>
 
     <media folder="media" destination="com_hikashop/images/payment/dotpay">
-        <filename>dotpay.jpeg</filename>
+        <filename>dotpay.png</filename>
     </media>
 
     <languages folder="language">
