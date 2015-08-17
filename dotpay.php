@@ -61,7 +61,32 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	}
 
 
+    /**
+     * This is internal hikashop method it is invoke to move image
+     *
+     * Moveing image is necessary because uninstal cause issue. For more details
+     * read
+     * http://www.hikashop.com/forum/development/878700-uninstall-custom-payment-plugin-image.html
+     * @param $element
+     */
+    public function onPaymentConfiguration(&$element)
+    {
+        $imagePath = HIKASHOP_MEDIA.'images/';
+        $this->moveImage($imagePath);
+        parent::onPaymentConfiguration($element);
+    }
 
+    /**
+     *  Move image from folder /image/payment/dotpay/ to /image/payment
+     *
+     * @param $imagePath
+     */
+    private function moveImage($imagePath)
+    {
+        $src = $imagePath . 'payment'.DS.'dotpay/dotpay.jpeg';
+        $destination = $imagePath.'payment/dotpay.jpeg';
+        JFile::copy($src, $destination,null, true );
+    }
 
 
 	/**
