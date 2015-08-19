@@ -23,6 +23,8 @@
     <languages folder="language">
         <language tag="pl-PL">pl-PL/pl-PL.plg_hikashoppayment_dotpay.ini</language>
         <language tag="pl-PL">pl-PL/pl-PL.plg_hikashoppayment_dotpay.sys.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_hikashoppayment_dotpay.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_hikashoppayment_dotpay.sys.ini</language>
     </languages>
 
 
