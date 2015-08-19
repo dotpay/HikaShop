@@ -11,8 +11,8 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	var $name = 'dotpay';
 
 	var $pluginConfig = array(
-		'identifier' => array("Id",'input'),
-		'pin' => array("Pin",'input'),
+        'identifier' => array("DOTPAY_ID",'input'),
+        'pin' => array("DOTPAY_PIN",'input'),
 		'dotpay_mode' => array('DOTPAY_MODE', 'list',array(
 			'test' => 'TEST',
 			'production' => 'PRODUCTION'
@@ -134,10 +134,11 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	public function getPaymentDefaultValues(&$element)
 	{
 		$element->payment_name='Dotpay';
-		$element->payment_description='dotpay';
+		$element->payment_description='PAY_WITH_DOTPAY';
 		$element->payment_images='dotpay';
 		$element->payment_params->address_type="billing";
 		$element->payment_params->invalid_status='cancelled';
+        $element->payment_params->pending_status='created';
 		$element->payment_params->verified_status='confirmed';
 	}
 
@@ -255,14 +256,19 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	 *
 	 * @return bool
 	 */
-	private function isPaymentParametersValidate()
-	{
-		if (!$this->payment_params->identifier || !$this->payment_params->pin){
-			$this->app->enqueueMessage(JText::_("INCOMPLET_CONFIG"),'error');
-			return false;
-		}
-		return true;
-	}
+    private function isPaymentParametersValidate()
+    {
+        if (!$this->payment_params->identifier || !$this->payment_params->pin || strlen($this->payment_params->pin) < 16){
+            $this->app->enqueueMessage(JText::_("INCOMPLETE_CONFIG"),'error');
+            return false;
+        }
+        if (!is_numeric($this->payment_params->identifier) || strlen($this->payment_params->identifier) < 6){
+            $this->app->enqueueMessage(JText::_("BAD_ID"),'error');
+            return false;
+        }
+
+        return true;
+    }
 
 	/**
 	 * Return price in correct format (two decimal character like: 10,00)
