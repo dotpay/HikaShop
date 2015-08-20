@@ -134,7 +134,7 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 	public function getPaymentDefaultValues(&$element)
 	{
 		$element->payment_name='Dotpay';
-		$element->payment_description='PAY_WITH_DOTPAY';
+		$element->payment_description='Worldwide secure payment';
 		$element->payment_images='dotpay';
 		$element->payment_params->address_type="billing";
 		$element->payment_params->invalid_status='cancelled';
@@ -250,7 +250,6 @@ class plgHikashoppaymentDotpay extends hikashopPaymentPlugin
 		$lang = JFactory::getLanguage();
 		return strtolower(substr($lang->get('tag'), 0, 2));
 	}
-
 	/**
 	 * Check if dotpay parameters from config is not empty
 	 *
