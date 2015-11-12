@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" version="3.1" method="upgrade" group="hikashoppayment">
 	<name>Dotpay Payment Plugin</name>
-	<creationDate>08 juillet 2015</creationDate>
-	<version>1.0.0</version>
+	<creationDate>2015-08-24</creationDate>
+	<version>1.0.1</version>
 	<author>Piotr Galas</author>
 	<authorEmail>piotr.galas@akra.net</authorEmail>
 	<authorUrl>http://akra.net/</authorUrl>
 	<copyright>(C) 2015 Akra. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<description>This plugin enables you to setup your dotpay payment system</description>
+	<description>PLG_DOTPAY_CONF_DESCRIPTION</description>
 	<files>
 		<filename plugin="dotpay">dotpay.php</filename>
 		<filename>dotpay_end.php</filename>
